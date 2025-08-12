@@ -1,0 +1,32 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Yaswantsoni1128/CivicEye#readme",
+  "bugs": {
+    "url": "https://github.com/Yaswantsoni1128/CivicEye/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yaswantsoni1128/CivicEye.git"
+  },
+  "license": "ISC",
+  "author": "Yaswant Srishti Vaibhav",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
