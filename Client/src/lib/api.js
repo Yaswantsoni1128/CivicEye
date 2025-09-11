@@ -45,3 +45,20 @@ export const logout = async () => {
   }
 }
 
+export const reportComplaint = async (data) => {
+  try {
+    const response = await api.post("/complain", data);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const fetchUserComplaints = async () => {
+  try {
+    const response = await api.get("/complain/my-complaints");
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
