@@ -27,9 +27,15 @@ export default function LoginPage() {
     if (response) {
       console.log("Response:", response.data);
       console.log("Login successful");
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      setError("");
       toast.success("Login successful!");   // show toast first
       setTimeout(() => {
-        navigation("/dashboard"); // redirect after toast is visible
+        const user = JSON.parse(localStorage.getItem("user"));
+        if(user.role === 'admin') navigation("/admin/dashboard");
+        else if(user.role === 'worker') navigation("/worker/dashboard");
+        else navigation("/user/dashboard"); // redirect after toast is visible
       }, 1200); // small delay so user can see toast
     }
   })

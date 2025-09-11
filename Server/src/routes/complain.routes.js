@@ -12,7 +12,7 @@ router.post(
   allowRoles("citizen"),
   async (req, res) => {
     try {
-      const { photoUrl, description, location } = req.body;
+      const { photoUrl, description, location , title } = req.body;
 
       if (!photoUrl || !location?.coordinates) {
         return res.status(400).json({ message: "Photo and location are required" });
@@ -29,6 +29,7 @@ router.post(
         location,
         type,
         priority,
+        title
       });
 
       res.status(201).json({
