@@ -1,10 +1,12 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import authRoutes from "./routes/auth.routes.js";
 import complainRoutes from "./routes/complain.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
-import cookieParser from "cookie-parser";
-import morgan from "morgan";
+import otpRoutes from "./routes/otp.routes.js";
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -39,6 +41,7 @@ app.get("/", (req, res)=>{
 app.use("/api/auth", authRoutes);
 app.use("/api/complain", complainRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/otp", otpRoutes);
 
 export {app}
 
