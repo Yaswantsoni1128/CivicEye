@@ -1,20 +1,22 @@
 import React from 'react'
-import { BrowserRouter as Router} from 'react-router-dom'
+import { Route, BrowserRouter as Router, Routes} from 'react-router-dom'
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import AppRoutes from './AppRoutes';
+import PublicRoutes from './PublicRoutes.jsx';
+import UserRoutes from './UserRoutes.jsx';
+import WorkerRoutes from './WorkerRoutes.jsx';
+import AdminRoutes from './AdminRoutes.jsx';
 
 
 const App = () => {
   return (
     <Router>
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-1 p-4 bg-gray-100">
-          <AppRoutes />
-        </main>
-        <Footer />
-      </div>
+      <Routes>
+        <Route path='/user/*' element={<UserRoutes />} />
+        <Route path='/worker/*' element={<WorkerRoutes />} />
+        <Route path='/admin/*' element={<AdminRoutes />} />
+        <Route path='/*' element={<PublicRoutes />} />
+      </Routes>
     </Router>
   )
 }
