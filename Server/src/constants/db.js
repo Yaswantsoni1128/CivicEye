@@ -1,1 +1,1 @@
-export const DB_NAME = "civic_eye"
+export const DB_NAME = "civicEyeDB"

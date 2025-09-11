@@ -11,10 +11,12 @@ const complaintSchema = new mongoose.Schema({
     coordinates: { type: [Number], required: true } // [longitude, latitude]
   },
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "Worker" },
-  priority: { type: Number, default: 0 }, // AI sets priority
-  proofPhotoUrl: { type: String }, // Worker uploads after resolving
+  priority: { type: Number, min: 0, max: 2, default: 0 },
+  proofPhotoUrl: { type: String }, 
   createdAt: { type: Date, default: Date.now },
-  resolvedAt: { type: Date }
+  resolvedAt: { type: Date },
+
+  feedback: { type: String, enum: ["satisfied", "not_satisfied"], default: null }
 });
 
 complaintSchema.index({ location: "2dsphere" });
