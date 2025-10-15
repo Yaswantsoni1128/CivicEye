@@ -95,7 +95,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-green-100">
+    <div className="min-h-screen flex items-center justify-center bg-green-100 relative overflow-hidden">
       <Toaster position="top-right" reverseOrder={false} />
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -107,6 +107,7 @@ export default function SignupPage() {
           Sign Up
         </h2>
 
+        {/* Step 1 - Phone + OTP */}
         {step === 1 && (
           <div className="space-y-4">
             <div>
@@ -155,6 +156,7 @@ export default function SignupPage() {
           </div>
         )}
 
+        {/* Step 2 - Signup Details */}
         {step === 2 && (
           <form onSubmit={handleSignup} className="space-y-4">
             <div>
@@ -205,5 +207,5 @@ export default function SignupPage() {
         )}
       </motion.div>
     </div>
-  );
+  );1
 }
