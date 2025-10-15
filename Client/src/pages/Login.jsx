@@ -12,6 +12,7 @@ export default function LoginPage() {
     role: "citizen",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigate();
 
   const handleChange = (e) => {
@@ -19,36 +20,39 @@ export default function LoginPage() {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.phone || !form.password || !form.role) {
       setError("All fields are required!");
       return;
     }
     setError("");
-    console.log("Form Submitted:", form);
-    login(form)
-      .then((response) => {
-        if (response) {
-          console.log("Response:", response.data);
-          console.log("Login successful");
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-          setError("");
-          toast.success("Login successful!"); // show toast first
-          setTimeout(() => {
-            const user = JSON.parse(localStorage.getItem("user"));
-            if (user.role === "admin") navigation("/admin/dashboard");
-            else if (user.role === "worker") navigation("/worker/dashboard");
-            else navigation("/user/dashboard"); // redirect after toast is visible
-          }, 1200); // small delay so user can see toast
-        }
-      })
-      .catch((error) => {
-        setError("Failed to log in");
-        toast.error("Failed to log in");
-        console.error(error);
-      });
+    setLoading(true);
+    
+    try {
+      const response = await login(form);
+      if (response && response.data) {
+        console.log("Response:", response.data);
+        console.log("Login successful");
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        setError("");
+        toast.success("Login successful!");
+        setTimeout(() => {
+          const user = JSON.parse(localStorage.getItem("user"));
+          if(user.role === 'admin') navigation("/admin/dashboard");
+          else if(user.role === 'worker') navigation("/worker/dashboard");
+          else navigation("/user/dashboard");
+        }, 1200);
+      }
+    } catch (error) {
+      const errorMessage = error.message || "Failed to log in";
+      setError(errorMessage);
+      toast.error(errorMessage);
+      console.error("Login error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -149,11 +153,23 @@ export default function LoginPage() {
             {/* Submit Button */}
             <motion.button
               type="submit"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-3 mt-2 bg-gradient-to-r from-green-500 via-blue-400 to-purple-400 text-white font-bold rounded-xl shadow-lg hover:from-green-600 hover:to-purple-500 transition text-lg tracking-wide"
+              disabled={loading}
+              whileHover={{ scale: loading ? 1 : 1.05 }}
+              whileTap={{ scale: loading ? 1 : 0.98 }}
+              className={`w-full py-3 mt-2 font-bold rounded-xl shadow-lg transition text-lg tracking-wide flex items-center justify-center ${
+                loading 
+                  ? "bg-green-400 cursor-not-allowed" 
+                  : "bg-gradient-to-r from-green-500 via-blue-400 to-purple-400 hover:from-green-600 hover:to-purple-500"
+              } text-white`}
             >
-              Login
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Logging in...
+                </>
+              ) : (
+                "Login"
+              )}
             </motion.button>
 
             {/* Signup Toggle */}
@@ -163,9 +179,9 @@ export default function LoginPage() {
               transition={{ delay: 1 }}
               className="text-center text-gray-600 text-sm mt-4"
             >
-              Don’t have an account?{" "}
+              Don't have an account?{" "}
               <span
-                onClick={() => navigation('/signup')} // you can manage state to switch form
+                onClick={() => navigation('/signup')}
                 className="text-green-600 font-semibold cursor-pointer hover:underline"
               >
                 Sign up
@@ -175,7 +191,7 @@ export default function LoginPage() {
         </motion.div>
       </div>
 
-      {/* Floating shapes remain same */}
+      {/* Floating shapes */}
       <motion.div
         className="absolute inset-0 z-0 pointer-events-none"
         initial={{ opacity: 0 }}
@@ -198,6 +214,9 @@ export default function LoginPage() {
           transition={{ repeat: Infinity, duration: 5 }}
         />
       </motion.div>
+      
+      {/* Global toaster */}
+      <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
 }
