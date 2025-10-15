@@ -2,13 +2,18 @@ import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate();
+  
   useEffect(() => {
-    const navigation = useNavigate();
-  navigation("/login");
-  }, []);
+    navigate("/login");
+  }, [navigate]);
+  
   return (
-    <div>
-      Home Page
+    <div className="min-h-screen flex items-center justify-center bg-green-50">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-green-700 mb-4">CivicEye</h1>
+        <p className="text-gray-600">Redirecting to login...</p>
+      </div>
     </div>
   )
 }
