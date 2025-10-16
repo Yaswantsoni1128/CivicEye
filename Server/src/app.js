@@ -26,7 +26,7 @@ app.use(express.urlencoded({
 
 
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  origin: process.env.CORS_ORIGIN || "https://civic-59dqhror1-yaswants-projects.vercel.app/",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
