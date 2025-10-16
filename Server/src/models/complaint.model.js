@@ -15,7 +15,7 @@ const complaintSchema = new mongoose.Schema({
   proofPhotoUrl: { type: String }, 
   createdAt: { type: Date, default: Date.now },
   resolvedAt: { type: Date },
-
+  title: { type: String },
   feedback: { type: String, enum: ["satisfied", "not_satisfied"], default: null }
 });
 

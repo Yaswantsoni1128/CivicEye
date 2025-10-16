@@ -27,7 +27,7 @@ router.post(
         location,
         type,
         priority,
-        title
+        title,
       });
 
       res.status(201).json({
