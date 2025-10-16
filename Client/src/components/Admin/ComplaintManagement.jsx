@@ -251,11 +251,9 @@ const ComplaintManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900">
-                          {complaint.title || 'Untitled Complaint'}
+                          {complaint.title || complaint.type || 'Untitled Complaint'}
                         </div>
-                        <div className="text-sm text-gray-500">
-                          {complaint.description?.substring(0, 50)}...
-                        </div>
+                        
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -311,7 +309,7 @@ const ComplaintManagement = () => {
 
         {/* Assign Modal */}
         {showAssignModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -355,7 +353,7 @@ const ComplaintManagement = () => {
 
         {/* Update Modal */}
         {showUpdateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}

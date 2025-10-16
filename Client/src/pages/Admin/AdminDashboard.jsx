@@ -24,6 +24,7 @@ import ComplaintManagement from '../../components/Admin/ComplaintManagement';
 import UserManagement from '../../components/Admin/UserManagement';
 import Analytics from '../../components/Admin/Analytics';
 import Settings from '../../components/Admin/Settings';
+import AdminProfileSection from '../../components/Admin/ProfileSection';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -56,18 +57,11 @@ const AdminDashboard = () => {
       description: 'Manage users and workers'
     },
     { 
-      id: 'analytics', 
-      label: 'Analytics', 
-      icon: <BarChart3 size={20} />, 
+      id: 'Profile', 
+      label: 'Profile', 
+      icon: <User size={20} />, 
       path: '/admin/dashboard',
-      description: 'Reports and insights'
-    },
-    { 
-      id: 'settings', 
-      label: 'Settings', 
-      icon: <SettingsIcon size={20} />, 
-      path: '/admin/dashboard',
-      description: 'System configuration'
+      description: 'Manage your account'
     },
   ];
 
@@ -137,6 +131,8 @@ const AdminDashboard = () => {
         return <Analytics />;
       case 'settings':
         return <Settings />;
+      case 'Profile':
+        return <AdminProfileSection />;
       default:
         return <DashboardOverview />;
     }
