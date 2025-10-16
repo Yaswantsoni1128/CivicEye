@@ -13,14 +13,12 @@ router.post(
   async (req, res) => {
     try {
       const { photoUrl, description, location , title } = req.body;
-
       if (!photoUrl || !location?.coordinates) {
         return res.status(400).json({ message: "Photo and location are required" });
       }
 
       // 🔹 Get AI classification + priority
       const { type, priority } = await analyzeComplaintImage(photoUrl);
-
       // 🔹 Save complaint
       const complaint = await Complaint.create({
         user: req.user.id,
