@@ -9,7 +9,7 @@ import {
   BarChart3,
   RefreshCw
 } from 'lucide-react';
-import { fetchReports, fetchAllComplaints } from '../../lib/api';
+import { fetchReports, fetchAllComplaints } from '../../lib/api.js';
 import toast from 'react-hot-toast';
 
 const DashboardOverview = () => {
