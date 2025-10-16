@@ -14,7 +14,10 @@ router.get(
   authMiddleware,
   allowRoles("worker"),
   async (req, res) => {
+    console.log("outside try block assigned complaints route");
     try {
+      console.log("Inside assigned complaints route");
+      console.log("req.user", req.user);
       const complaints = await Complaint.find({ assignedTo: req.user.id })
         .populate("user", "name phone email") // who reported
         .sort({ createdAt: -1 });
@@ -99,6 +102,8 @@ router.get(
   allowRoles("worker"),
   async (req, res) => {
     try {
+      console.log("Inside performance route");
+      console.log("req.user", req.user);
       const totalAssigned = await Complaint.countDocuments({ assignedTo: req.user.id });
       const resolved = await Complaint.countDocuments({ assignedTo: req.user.id, status: "resolved" });
       const inProgress = await Complaint.countDocuments({ assignedTo: req.user.id, status: "in_progress" });
