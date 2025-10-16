@@ -89,7 +89,7 @@ export default function HomeSection({ setActive }) {
       </div>
 
       {/* Stats Cards */}
-      <motion.div 
+      {/* <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -114,7 +114,7 @@ export default function HomeSection({ setActive }) {
             </div>
           </motion.div>
         ))}
-      </motion.div>
+      </motion.div> */}
 
       {/* Quick Actions */}
       <motion.div
@@ -162,7 +162,7 @@ export default function HomeSection({ setActive }) {
       </motion.div>
 
       {/* Recent Activity */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
@@ -198,7 +198,7 @@ export default function HomeSection({ setActive }) {
             <span className="text-xs text-gray-500">1d ago</span>
           </div>
         </div>
-      </motion.div>
+      </motion.div> */}
     </motion.div>
   );
 }
