@@ -162,6 +162,7 @@ export default function TrackSection() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filteredComplaints.map((complaint, index) => (
+            console.log(complaint),
             <motion.div
               key={complaint._id}
               initial={{ opacity: 0, y: 20 }}
@@ -174,7 +175,7 @@ export default function TrackSection() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="text-base font-bold text-gray-900 mb-1">
-                      {complaint.title || "Untitled Complaint"}
+                      {complaint.title || complaint.type || "Untitled Complaint"}
                     </h3>
                     <p className="text-gray-600 text-xs leading-relaxed">
                       {complaint.description || "No description provided"}

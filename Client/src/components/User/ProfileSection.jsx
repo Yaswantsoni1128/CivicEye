@@ -83,7 +83,7 @@ export default function ProfileSection() {
                 <p className="text-green-100">Manage your account information</p>
               </div>
             </div>
-            {!isEditing ? (
+            {/* {!isEditing ? (
               <button
                 onClick={handleEdit}
                 className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition"
@@ -108,7 +108,7 @@ export default function ProfileSection() {
                   <span>Cancel</span>
                 </button>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 
