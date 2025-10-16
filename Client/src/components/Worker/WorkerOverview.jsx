@@ -33,11 +33,9 @@ const WorkerOverview = () => {
         fetchAssignedComplaints(),
         fetchWorkerPerformance()
       ]);
-
       if (complaintsResponse?.data?.complaints) {
         setAssignedComplaints(complaintsResponse.data.complaints.slice(0, 5));
       }
-
       if (performanceResponse?.data) {
         setPerformance(performanceResponse.data);
       }

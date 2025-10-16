@@ -39,7 +39,7 @@ const WorkerDashboard = () => {
     },
     { 
       id: 'complaints', 
-      label: 'My Complaints', 
+      label: 'Assigned Complaints', 
       icon: <ClipboardList size={20} />, 
       path: '/worker/dashboard',
       description: 'Manage assigned complaints'

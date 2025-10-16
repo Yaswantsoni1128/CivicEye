@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import UserDashboard from "./pages/user/UserDashboard.jsx";
+import UserDashboard from "./pages/User/UserDashboard.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import WorkerDashboard from "./pages/Worker/WorkerDashboard.jsx";
 import Home from "./pages/Home.jsx";
