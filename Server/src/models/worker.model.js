@@ -5,7 +5,12 @@ const workerSchema = new mongoose.Schema({
   name: { type: String, required: true },
   phone: { type: String, required: true, unique: true },
   email: { type: String, unique: true },
-  password: { type: String, required: true, minlength: 6 }, 
+  password: { type: String, required: true, minlength: 6 },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "active",
+  },
   assignedComplaints: [{ type: mongoose.Schema.Types.ObjectId, ref: "Complaint" }],
   completedComplaints: [{ type: mongoose.Schema.Types.ObjectId, ref: "Complaint" }],
   performance: {

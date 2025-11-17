@@ -1,7 +1,7 @@
 import express from "express";
 import Complaint from "../models/complaint.model.js";
-import User from "../models/user.model.js"; 
-import Worker from "../models/worker.model.js"; 
+import User from "../models/user.model.js";
+import Worker from "../models/worker.model.js";
 import { authMiddleware } from "../middlewares/auth.js";
 import { allowRoles } from "../middlewares/roleMiddleware.js";
 
@@ -126,6 +126,115 @@ router.get(
       });
     } catch (err) {
       res.status(500).json({ message: "Failed to generate report", error: err });
+    }
+  }
+);
+
+const sanitizeWorker = (workerDoc) => {
+  const worker = workerDoc.toObject ? workerDoc.toObject() : workerDoc;
+  delete worker.password;
+  worker.assignedCount = worker.assignedComplaints ? worker.assignedComplaints.length : 0;
+  worker.completedCount = worker.completedComplaints ? worker.completedComplaints.length : 0;
+  return worker;
+};
+
+router.get(
+  "/workers",
+  authMiddleware,
+  allowRoles("admin"),
+  async (_req, res) => {
+    try {
+      const workers = await Worker.find().sort({ createdAt: -1 });
+      res.json({
+        workers: workers.map(sanitizeWorker),
+      });
+    } catch (err) {
+      res.status(500).json({ message: "Failed to fetch workers", error: err });
+    }
+  }
+);
+
+router.post(
+  "/workers",
+  authMiddleware,
+  allowRoles("admin"),
+  async (req, res) => {
+    try {
+      const { name, phone, email, password, status = "active" } = req.body;
+
+      if (!name || !phone || !password) {
+        return res.status(400).json({ message: "Name, phone, and password are required" });
+      }
+
+      const existingWorker = await Worker.findOne({ phone });
+      if (existingWorker) {
+        return res.status(400).json({ message: "Worker already exists with this phone number" });
+      }
+
+      const hashedPassword = await Worker.hashPassword(password);
+
+      const worker = await Worker.create({
+        name,
+        phone,
+        email,
+        password: hashedPassword,
+        status,
+      });
+
+      res.status(201).json({ worker: sanitizeWorker(worker) });
+    } catch (err) {
+      res.status(500).json({ message: "Worker creation failed", error: err });
+    }
+  }
+);
+
+router.put(
+  "/workers/:id",
+  authMiddleware,
+  allowRoles("admin"),
+  async (req, res) => {
+    try {
+      const { name, phone, email, status, password } = req.body;
+
+      const worker = await Worker.findById(req.params.id);
+      if (!worker) return res.status(404).json({ message: "Worker not found" });
+
+      if (phone && phone !== worker.phone) {
+        const existingWorker = await Worker.findOne({ phone });
+        if (existingWorker) {
+          return res.status(400).json({ message: "Another worker with this phone already exists" });
+        }
+      }
+
+      if (name) worker.name = name;
+      if (phone) worker.phone = phone;
+      if (email !== undefined) worker.email = email;
+      if (status) worker.status = status;
+      if (password) {
+        worker.password = await Worker.hashPassword(password);
+      }
+
+      await worker.save();
+
+      res.json({ worker: sanitizeWorker(worker) });
+    } catch (err) {
+      res.status(500).json({ message: "Failed to update worker", error: err });
+    }
+  }
+);
+
+router.delete(
+  "/workers/:id",
+  authMiddleware,
+  allowRoles("admin"),
+  async (req, res) => {
+    try {
+      const worker = await Worker.findByIdAndDelete(req.params.id);
+      if (!worker) return res.status(404).json({ message: "Worker not found" });
+
+      res.json({ message: "Worker deleted successfully" });
+    } catch (err) {
+      res.status(500).json({ message: "Failed to delete worker", error: err });
     }
   }
 );

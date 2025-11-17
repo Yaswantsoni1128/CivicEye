@@ -88,7 +88,7 @@ export const fetchUserComplaints = async () => {
 // Auth Routes - Admin/Worker Creation
 export const createWorker = async (data) => {
   try {
-    const response = await api.post("/auth/create-worker", data);
+    const response = await api.post("/admin/workers", data);
     return response;
   } catch (error) {
     console.error("Create worker error:", error);
@@ -212,6 +212,37 @@ export const fetchWorkerPerformance = async () => {
     return response;
   } catch (error) {
     console.error("Fetch worker performance error:", error);
+    throw handleApiError(error);
+  }
+}
+
+// Worker Management (Admin)
+export const fetchWorkers = async () => {
+  try {
+    const response = await api.get("/admin/workers");
+    return response;
+  } catch (error) {
+    console.error("Fetch workers error:", error);
+    throw handleApiError(error);
+  }
+}
+
+export const updateWorker = async (workerId, data) => {
+  try {
+    const response = await api.put(`/admin/workers/${workerId}`, data);
+    return response;
+  } catch (error) {
+    console.error("Update worker error:", error);
+    throw handleApiError(error);
+  }
+}
+
+export const deleteWorker = async (workerId) => {
+  try {
+    const response = await api.delete(`/admin/workers/${workerId}`);
+    return response;
+  } catch (error) {
+    console.error("Delete worker error:", error);
     throw handleApiError(error);
   }
 }
