@@ -21,7 +21,7 @@ import { logout } from '../../lib/api.js';
 
 import DashboardOverview from '../../components/Admin/DashboardOverview';
 import ComplaintManagement from '../../components/Admin/ComplaintManagement';
-import UserManagement from '../../components/Admin/UserManagement';
+import WorkerManagement from '../../components/Admin/WorkerManagement';
 import Analytics from '../../components/Admin/Analytics';
 import Settings from '../../components/Admin/Settings';
 import AdminProfileSection from '../../components/Admin/ProfileSection';
@@ -50,11 +50,11 @@ const AdminDashboard = () => {
       description: 'Manage all complaints'
     },
     { 
-      id: 'users', 
-      label: 'Users', 
+      id: 'workers', 
+      label: 'Workers', 
       icon: <Users size={20} />, 
       path: '/admin/dashboard',
-      description: 'Manage users and workers'
+      description: 'Manage worker accounts'
     },
     { 
       id: 'Profile', 
@@ -125,8 +125,8 @@ const AdminDashboard = () => {
         return <DashboardOverview />;
       case 'complaints':
         return <ComplaintManagement />;
-      case 'users':
-        return <UserManagement />;
+      case 'workers':
+        return <WorkerManagement />;
       case 'analytics':
         return <Analytics />;
       case 'settings':
