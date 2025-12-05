@@ -95,7 +95,7 @@ const WorkerDashboard = () => {
       .then(() => {
         toast.success('Logged out successfully!');
         setTimeout(() => {
-          window.location.href = '/login';
+          window.location.href = '/';
         }, 800);
       })
       .catch((err) => {
