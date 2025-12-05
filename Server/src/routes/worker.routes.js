@@ -2,6 +2,7 @@ import express from "express";
 import { authMiddleware } from "../middlewares/auth.js";
 import { allowRoles } from "../middlewares/roleMiddleware.js";
 import {
+  setEstimatedResolutionDate,
   getAssignedComplaints,
   startComplaint,
   resolveComplaint,
@@ -18,6 +19,16 @@ router.get(
   authMiddleware,
   allowRoles("worker"),
   getAssignedComplaints
+);
+
+// -------------------
+// 0️⃣ Set estimated resolution date
+// -------------------
+router.patch(
+  "/:id/eta",
+  authMiddleware,
+  allowRoles("worker"),
+  setEstimatedResolutionDate
 );
 
 // -------------------

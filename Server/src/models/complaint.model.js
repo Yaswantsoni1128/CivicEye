@@ -11,6 +11,7 @@ const complaintSchema = new mongoose.Schema({
     coordinates: { type: [Number], required: true } // [longitude, latitude]
   },
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "Worker" },
+  estimatedResolutionDate: { type: Date },
   priority: { type: Number, min: 0, max: 2, default: 0 },
   proofPhotoUrl: { type: String }, 
   createdAt: { type: Date, default: Date.now },

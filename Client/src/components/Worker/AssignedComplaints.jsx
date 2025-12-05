@@ -10,7 +10,7 @@ import {
   Camera,
   RefreshCw
 } from 'lucide-react';
-import { fetchAssignedComplaints, startComplaint, resolveComplaint } from '../../lib/api';
+import { fetchAssignedComplaints, startComplaint, resolveComplaint, setEstimatedResolutionDate } from '../../lib/api';
 import toast from 'react-hot-toast';
 
 const AssignedComplaints = () => {
@@ -22,6 +22,8 @@ const AssignedComplaints = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [resolveData, setResolveData] = useState({ proofPhotoUrl: '' });
+  const [showEtaModal, setShowEtaModal] = useState(false);
+  const [etaDate, setEtaDate] = useState('');
 
   useEffect(() => {
     fetchComplaints();
@@ -87,6 +89,24 @@ const AssignedComplaints = () => {
     } catch (error) {
       console.error('Error resolving complaint:', error);
       toast.error('Failed to resolve complaint');
+    }
+  };
+
+  const handleSaveEta = async () => {
+    if (!selectedComplaint) return;
+    if (!etaDate) {
+      toast.error('Please select a date');
+      return;
+    }
+    try {
+      await setEstimatedResolutionDate(selectedComplaint._id, etaDate);
+      toast.success('Estimated date saved');
+      setShowEtaModal(false);
+      setEtaDate('');
+      fetchComplaints();
+    } catch (error) {
+      console.error('Error saving ETA:', error);
+      toast.error(error?.message || 'Failed to save estimated date');
     }
   };
 
@@ -238,6 +258,9 @@ const AssignedComplaints = () => {
                           Status
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          ETA
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Priority
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -276,6 +299,11 @@ const AssignedComplaints = () => {
                               <span className="ml-2 text-sm text-gray-900 capitalize">{complaint.status}</span>
                             </div>
                           </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {complaint.estimatedResolutionDate
+                              ? new Date(complaint.estimatedResolutionDate).toLocaleDateString()
+                              : <span className="text-gray-500">Not set</span>}
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(complaint.priority)}`}>
                               {complaint.priority}
@@ -295,6 +323,17 @@ const AssignedComplaints = () => {
                                   <Play className="w-4 h-4" />
                                 </button>
                               )}
+                              <button
+                                onClick={() => {
+                                  setSelectedComplaint(complaint);
+                                  setEtaDate(complaint.estimatedResolutionDate ? complaint.estimatedResolutionDate.split('T')[0] : '');
+                                  setShowEtaModal(true);
+                                }}
+                                className="text-yellow-600 hover:text-yellow-900"
+                                title={complaint.estimatedResolutionDate ? "Update ETA" : "Set ETA"}
+                              >
+                                <Clock className="w-4 h-4" />
+                              </button>
                               {complaint.status === 'in_progress' && (
                                 <button
                                   onClick={() => {
@@ -359,6 +398,52 @@ const AssignedComplaints = () => {
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                   >
                     Resolve
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* ETA Modal */}
+        {showEtaModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-lg p-6 w-full max-w-md"
+            >
+              <h3 className="text-lg font-semibold mb-4">Estimated resolution date</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select date
+                  </label>
+                  <input
+                    type="date"
+                    value={etaDate}
+                    onChange={(e) => setEtaDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Let the citizen know when you expect to complete this.
+                  </p>
+                </div>
+                <div className="flex justify-end space-x-3">
+                  <button
+                    onClick={() => {
+                      setShowEtaModal(false);
+                      setEtaDate('');
+                    }}
+                    className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveEta}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  >
+                    Save ETA
                   </button>
                 </div>
               </div>
