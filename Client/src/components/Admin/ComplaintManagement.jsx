@@ -397,6 +397,9 @@ const ComplaintManagement = () => {
                   Assigned To
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  ETA
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
                 <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -407,14 +410,14 @@ const ComplaintManagement = () => {
             <tbody className="bg-white divide-y divide-gray-100">
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan="8" className="px-6 py-12 text-center text-gray-500">
                     <Loader2 className="w-6 h-6 mx-auto mb-4 animate-spin text-green-500" />
                     Loading complaints...
                   </td>
                 </tr>
               ) : filteredComplaints.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan="8" className="px-6 py-12 text-center text-gray-400">
                     <ClipboardList className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                     <p className="text-lg font-medium">No complaints found</p>
                     <p className="text-sm text-gray-500 mt-2">Try adjusting your filters</p>
@@ -471,6 +474,18 @@ const ComplaintManagement = () => {
                         <span className="text-sm text-gray-400 italic">Unassigned</span>
                       )}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {complaint.estimatedResolutionDate ? (
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-blue-500" />
+                          <span className="text-sm font-medium text-gray-900">
+                            {formatDate(complaint.estimatedResolutionDate)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-400 italic">Not set</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(complaint.createdAt)}
                     </td>
@@ -525,9 +540,17 @@ const ComplaintManagement = () => {
             <div className="px-6 py-4 border-b border-gray-100">
               <h3 className="text-xl font-semibold text-gray-900">Assign Complaint</h3>
               {selectedComplaint && (
-                <p className="text-sm text-gray-600 mt-1">
-                  Assigning: <span className="font-medium text-gray-900">{selectedComplaint.title || selectedComplaint.type || 'Complaint'}</span>
-                </p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-sm text-gray-600">
+                    Assigning: <span className="font-medium text-gray-900">{selectedComplaint.title || selectedComplaint.type || 'Complaint'}</span>
+                  </p>
+                  {selectedComplaint.estimatedResolutionDate && (
+                    <p className="text-sm text-gray-600 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-blue-500" />
+                      ETA: <span className="font-medium text-gray-900">{formatDate(selectedComplaint.estimatedResolutionDate)}</span>
+                    </p>
+                  )}
+                </div>
               )}
             </div>
             <div className="px-6 py-6 space-y-4">
@@ -598,9 +621,17 @@ const ComplaintManagement = () => {
             <div className="px-6 py-4 border-b border-gray-100">
               <h3 className="text-xl font-semibold text-gray-900">Update Complaint</h3>
               {selectedComplaint && (
-                <p className="text-sm text-gray-600 mt-1">
-                  Updating: <span className="font-medium text-gray-900">{selectedComplaint.title || selectedComplaint.type || 'Complaint'}</span>
-                </p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-sm text-gray-600">
+                    Updating: <span className="font-medium text-gray-900">{selectedComplaint.title || selectedComplaint.type || 'Complaint'}</span>
+                  </p>
+                  {selectedComplaint.estimatedResolutionDate && (
+                    <p className="text-sm text-gray-600 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-blue-500" />
+                      ETA: <span className="font-medium text-gray-900">{formatDate(selectedComplaint.estimatedResolutionDate)}</span>
+                    </p>
+                  )}
+                </div>
               )}
             </div>
             <div className="px-6 py-6 space-y-4">

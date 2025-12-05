@@ -1,5 +1,47 @@
 import Complaint from "../models/complaint.model.js";
 
+// 0️⃣ Set estimated resolution date for assigned complaint
+export const setEstimatedResolutionDate = async (req, res) => {
+  try {
+    const { estimatedResolutionDate } = req.body;
+
+    if (!estimatedResolutionDate) {
+      return res
+        .status(400)
+        .json({ message: "estimatedResolutionDate is required" });
+    }
+
+    const complaint = await Complaint.findOne({
+      _id: req.params.id,
+      assignedTo: req.user.id,
+    });
+
+    if (!complaint) {
+      return res.status(404).json({
+        message: "Complaint not found or not assigned to you",
+      });
+    }
+
+    complaint.estimatedResolutionDate = new Date(estimatedResolutionDate);
+    // If admin marked it received, ensure it moves to in_progress when ETA set
+    if (complaint.status === "received") {
+      complaint.status = "in_progress";
+    }
+
+    await complaint.save();
+
+    res.json({
+      message: "Estimated resolution date saved",
+      complaint,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to set estimated resolution date",
+      error: err,
+    });
+  }
+};
+
 // 1️⃣ Get complaints assigned to logged in worker
 export const getAssignedComplaints = async (req, res) => {
   console.log("outside try block assigned complaints route");

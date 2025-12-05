@@ -206,6 +206,18 @@ export const resolveComplaint = async (complaintId, data) => {
   }
 }
 
+export const setEstimatedResolutionDate = async (complaintId, date) => {
+  try {
+    const response = await api.patch(`/worker/${complaintId}/eta`, {
+      estimatedResolutionDate: date,
+    });
+    return response;
+  } catch (error) {
+    console.error("Set ETA error:", error);
+    throw handleApiError(error);
+  }
+}
+
 export const fetchWorkerPerformance = async () => {
   try {
     const response = await api.get("/worker/performance");

@@ -7,8 +7,61 @@ import { generateToken } from "../utils/jwt.js";
 export const signup = async (req, res) => {
   try {
     const { name, phone, email, password, role } = req.body;
+    const requestedRole = (role || "citizen").toLowerCase().trim();
 
-    if (role && role !== "citizen") {
+    // --- First-admin bootstrap: allow admin signup only if no admins exist ---
+    if (requestedRole === "admin") {
+      const adminCount = await Admin.countDocuments();
+      if (adminCount > 0) {
+        return res.status(403).json({
+          message:
+            "Admin signup is only allowed for the first admin. Ask an existing admin to create more admins.",
+        });
+      }
+
+      const existingAdmin = await Admin.findOne({ phone });
+      if (existingAdmin) {
+        return res.status(400).json({ message: "Admin already exists" });
+      }
+
+      const hashedAdminPassword = await Admin.hashPassword(password);
+      const admin = await Admin.create({
+        name,
+        phone,
+        email,
+        password: hashedAdminPassword,
+      });
+
+      // Keep a matching User entry for consistency and login
+      const hashedUserPassword = await User.hashPassword(password);
+      const user = await User.create({
+        name,
+        phone,
+        email,
+        password: hashedUserPassword,
+        role: "admin",
+      });
+
+      admin.user = user._id;
+      await admin.save();
+
+      const token = generateToken(admin, "admin");
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      const adminData = admin.toObject ? admin.toObject() : admin;
+      if (adminData.password) delete adminData.password;
+      adminData.role = "admin";
+
+      return res.status(201).json({ token, user: adminData, role: "admin" });
+    }
+
+    // Default: citizen signup only
+    if (requestedRole && requestedRole !== "citizen") {
       return res
         .status(403)
         .json({ message: "Cannot signup as admin or worker" });

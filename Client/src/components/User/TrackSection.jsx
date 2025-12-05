@@ -243,9 +243,9 @@ export default function TrackSection() {
                   </div>
                 )}
 
-                {/* Assigned Worker */}
-                {complaint.assignedTo && (
-                  <div className="p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+                {/* Assigned Worker / ETA */}
+                {complaint.assignedTo ? (
+                  <div className="p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200 space-y-2">
                     <div className="flex items-center space-x-2">
                       <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
                         <span className="text-white font-semibold text-xs">
@@ -257,6 +257,22 @@ export default function TrackSection() {
                         <p className="text-xs text-gray-600">{complaint.assignedTo.phone}</p>
                       </div>
                     </div>
+                    <div className="text-xs text-gray-700">
+                      {complaint.estimatedResolutionDate ? (
+                        <span>
+                          Estimated resolution:{" "}
+                          <span className="font-semibold">
+                            {new Date(complaint.estimatedResolutionDate).toLocaleDateString()}
+                          </span>
+                        </span>
+                      ) : (
+                        <span className="text-gray-500">Worker has not provided an ETA yet.</span>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 text-xs text-gray-600">
+                    No worker assigned yet. We will notify you once it is assigned.
                   </div>
                 )}
               </div>
