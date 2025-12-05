@@ -11,6 +11,7 @@ const workerSchema = new mongoose.Schema({
     enum: ["active", "inactive"],
     default: "active",
   },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   assignedComplaints: [{ type: mongoose.Schema.Types.ObjectId, ref: "Complaint" }],
   completedComplaints: [{ type: mongoose.Schema.Types.ObjectId, ref: "Complaint" }],
   performance: {

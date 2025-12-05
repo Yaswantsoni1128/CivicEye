@@ -140,6 +140,27 @@ export default function LoginPage() {
               />
             </motion.div>
 
+            {/* Role Selector */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.9 }}
+            >
+              <label className="block text-base font-semibold mb-2 text-green-700">
+                Login as
+              </label>
+              <select
+                name="role"
+                value={form.role}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border-2 border-green-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-400 text-lg bg-white shadow-sm"
+              >
+                <option value="citizen">Citizen</option>
+                <option value="worker">Worker</option>
+                <option value="admin">Admin</option>
+              </select>
+            </motion.div>
+
             {error && (
               <motion.p
                 initial={{ opacity: 0 }}
