@@ -127,6 +127,16 @@ export const submitFeedback = async (id, data) => {
   }
 }
 
+export const submitRating = async (id, rating) => {
+  try {
+    const response = await api.post(`/complain/${id}/rating`, { rating });
+    return response;
+  } catch (error) {
+    console.error("Submit rating error:", error);
+    throw handleApiError(error);
+  }
+}
+
 // Admin Routes
 export const fetchAllComplaints = async (filters = {}) => {
   try {

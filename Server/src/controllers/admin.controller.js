@@ -27,7 +27,7 @@ export const getComplaints = async (req, res) => {
 
     const complaints = await Complaint.find(filter)
       .populate("user", "name email")
-      .populate("assignedTo", "name email phone")
+      .populate("assignedTo", "name email phone averageRating")
       .sort({ createdAt: -1 });
 
     res.json({ complaints });

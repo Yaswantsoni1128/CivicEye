@@ -425,9 +425,22 @@ const WorkerManagement = () => {
                               </div>
                               <div>
                                 <p className="font-semibold text-gray-900">{worker.name}</p>
-                                <p className="text-xs text-gray-400 tracking-wide">
-                                  ID: {worker._id?.slice(-6)}
-                                </p>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <p className="text-xs text-gray-400 tracking-wide">
+                                    ID: {worker._id?.slice(-6)}
+                                  </p>
+                                  {worker.averageRating > 0 && (
+                                    <>
+                                      <span className="text-xs text-gray-400">•</span>
+                                      <div className="flex items-center gap-1">
+                                        <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                        <span className="text-xs font-semibold text-gray-700">
+                                          {worker.averageRating.toFixed(1)}
+                                        </span>
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </td>

@@ -6,6 +6,7 @@ import {
   getMyComplaints,
   getComplaintById,
   submitFeedback,
+  submitRating,
 } from "../controllers/complain.controller.js";
 
 const router = express.Router();
@@ -26,6 +27,13 @@ router.post(
   authMiddleware,
   allowRoles("citizen"),
   submitFeedback
+);
+
+router.post(
+  "/:id/rating",
+  authMiddleware,
+  allowRoles("citizen"),
+  submitRating
 );
 
 export default router;

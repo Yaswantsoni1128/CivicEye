@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Clock, CheckCircle, AlertCircle, XCircle, Search, X, User, Calendar, FileImage, Zap } from "lucide-react";
-import { fetchUserComplaints } from "../../lib/api.js";
+import { MapPin, Clock, CheckCircle, AlertCircle, XCircle, Search, X, User, Calendar, FileImage, Zap, Star } from "lucide-react";
+import { fetchUserComplaints, submitRating } from "../../lib/api.js";
 import toast from "react-hot-toast";
 
 export default function TrackSection() {
@@ -11,6 +11,8 @@ export default function TrackSection() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showTimelineModal, setShowTimelineModal] = useState(false);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [submittingRating, setSubmittingRating] = useState(false);
 
   useEffect(() => {
     fetchUserComplaints()
@@ -56,10 +58,22 @@ export default function TrackSection() {
     }
   };
 
+  // Get display status based on complaint state
+  const getDisplayStatus = (complaint) => {
+    if (complaint.status === "resolved") {
+      return "resolved";
+    }
+    if (complaint.assignedTo) {
+      return "in_progress";
+    }
+    return "pending";
+  };
+
   const filteredComplaints = complaints.filter(complaint => {
     const matchesSearch = complaint.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           complaint.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === "all" || complaint.status?.toLowerCase() === filterStatus;
+    const displayStatus = getDisplayStatus(complaint);
+    const matchesFilter = filterStatus === "all" || displayStatus === filterStatus;
     return matchesSearch && matchesFilter;
   });
 
@@ -92,6 +106,30 @@ export default function TrackSection() {
   const handleComplaintClick = (complaint) => {
     setSelectedComplaint(complaint);
     setShowTimelineModal(true);
+  };
+
+  const handleRatingSubmit = async (rating) => {
+    if (!selectedComplaint) return;
+    
+    try {
+      setSubmittingRating(true);
+      await submitRating(selectedComplaint._id, rating);
+      toast.success("Rating submitted successfully!");
+      
+      // Update the complaint in the list
+      setComplaints(prevComplaints =>
+        prevComplaints.map(c =>
+          c._id === selectedComplaint._id ? { ...c, rating } : c
+        )
+      );
+      
+      // Update selected complaint
+      setSelectedComplaint({ ...selectedComplaint, rating });
+    } catch (error) {
+      toast.error(error?.message || "Failed to submit rating");
+    } finally {
+      setSubmittingRating(false);
+    }
   };
 
   if (loading) {
@@ -158,7 +196,6 @@ export default function TrackSection() {
             <option value="pending">Pending</option>
             <option value="in_progress">In Progress</option>
             <option value="resolved">Resolved</option>
-            <option value="rejected">Rejected</option>
           </select>
         </div>
       </motion.div>
@@ -215,9 +252,11 @@ export default function TrackSection() {
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    {getStatusIcon(complaint.status)}
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(complaint.status)}`}>
-                      {complaint.status || "Pending"}
+                    {getStatusIcon(getDisplayStatus(complaint))}
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(getDisplayStatus(complaint))}`}>
+                      {getDisplayStatus(complaint) === "pending" ? "Pending" : 
+                       getDisplayStatus(complaint) === "in_progress" ? "In Progress" : 
+                       "Resolved"}
                     </span>
                   </div>
                 </div>
@@ -307,6 +346,36 @@ export default function TrackSection() {
                 ) : (
                   <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 text-xs text-gray-600">
                     No worker assigned yet. We will notify you once it is assigned.
+                  </div>
+                )}
+
+                {/* Rating Section for Resolved Complaints */}
+                {complaint.status === "resolved" && (
+                  <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    {complaint.rating ? (
+                      <div className="flex items-center gap-2">
+                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                        <span className="text-sm font-semibold text-gray-900">
+                          Your Rating: {complaint.rating}/5
+                        </span>
+                        <div className="flex gap-0.5 ml-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`w-3 h-3 ${
+                                star <= complaint.rating
+                                  ? "text-yellow-500 fill-yellow-500"
+                                  : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-600 mb-2">
+                        Rate the resolution quality
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
@@ -565,6 +634,77 @@ export default function TrackSection() {
                         <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                           <h3 className="font-semibold text-gray-500">Not Yet Resolved</h3>
                           <p className="text-sm text-gray-400 mt-1">Waiting for resolution...</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 5. Rating Section */}
+                  {selectedComplaint.status === "resolved" && (
+                    <div className="relative flex items-start gap-4">
+                      <div className="relative z-10 flex-shrink-0">
+                        <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg">
+                          <Star className="w-6 h-6 text-white fill-white" />
+                        </div>
+                      </div>
+                      <div className="flex-1 pt-1">
+                        <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
+                          <div className="flex items-center gap-2 mb-3">
+                            <h3 className="font-semibold text-gray-900">Rate the Resolution</h3>
+                          </div>
+                          {selectedComplaint.rating ? (
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium text-gray-700">Your Rating:</span>
+                                <div className="flex gap-1">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                      key={star}
+                                      className={`w-5 h-5 ${
+                                        star <= selectedComplaint.rating
+                                          ? "text-yellow-500 fill-yellow-500"
+                                          : "text-gray-300"
+                                      }`}
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-sm font-semibold text-gray-900">
+                                  {selectedComplaint.rating}/5
+                                </span>
+                              </div>
+                              <p className="text-xs text-gray-500">Thank you for your feedback!</p>
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              <p className="text-sm text-gray-600">
+                                How would you rate the quality of this resolution?
+                              </p>
+                              <div className="flex items-center gap-2">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() => handleRatingSubmit(star)}
+                                    onMouseEnter={() => setHoveredRating(star)}
+                                    onMouseLeave={() => setHoveredRating(0)}
+                                    disabled={submittingRating}
+                                    className="transition-transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    <Star
+                                      className={`w-8 h-8 transition-colors ${
+                                        star <= (hoveredRating || 0)
+                                          ? "text-yellow-500 fill-yellow-500"
+                                          : "text-gray-300 hover:text-yellow-400"
+                                      }`}
+                                    />
+                                  </button>
+                                ))}
+                              </div>
+                              {submittingRating && (
+                                <p className="text-xs text-gray-500">Submitting rating...</p>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

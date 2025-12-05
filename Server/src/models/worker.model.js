@@ -18,6 +18,8 @@ const workerSchema = new mongoose.Schema({
     tasksCompleted: { type: Number, default: 0 },
     avgResolutionTime: { type: Number, default: 0 } // in hours
   },
+  averageRating: { type: Number, default: 0, min: 0, max: 5 },
+  totalRatings: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now }
 });
 

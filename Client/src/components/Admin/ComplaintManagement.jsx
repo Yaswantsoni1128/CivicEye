@@ -20,7 +20,8 @@ import {
   User,
   Calendar,
   FileImage,
-  Zap
+  Zap,
+  Star
 } from 'lucide-react';
 import { fetchAllComplaints, assignComplaint, updateComplaint, fetchWorkers } from '../../lib/api';
 import toast from 'react-hot-toast';
@@ -498,9 +499,19 @@ const ComplaintManagement = () => {
                       {complaint.assignedTo ? (
                         <div className="flex items-center gap-2">
                           <Users className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm font-medium text-gray-900">
-                            {complaint.assignedTo.name}
-                          </span>
+                          <div>
+                            <span className="text-sm font-medium text-gray-900">
+                              {complaint.assignedTo.name}
+                            </span>
+                            {complaint.assignedTo.averageRating > 0 && (
+                              <div className="flex items-center gap-1 mt-0.5">
+                                <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                <span className="text-xs text-gray-600">
+                                  {complaint.assignedTo.averageRating.toFixed(1)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       ) : (
                         <span className="text-sm text-gray-400 italic">Unassigned</span>
@@ -997,6 +1008,37 @@ const ComplaintManagement = () => {
                   )}
                 </div>
               </div>
+
+              {/* Rating Section */}
+              {selectedComplaint.status === "resolved" && (
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    <Star className="w-4 h-4 text-yellow-500" />
+                    Customer Rating
+                  </h4>
+                  {selectedComplaint.rating ? (
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`w-5 h-5 ${
+                              star <= selectedComplaint.rating
+                                ? "text-yellow-500 fill-yellow-500"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-lg font-semibold text-gray-900">
+                        {selectedComplaint.rating}/5
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">Customer has not rated this complaint yet</p>
+                  )}
+                </div>
+              )}
 
               {/* Original Complaint Photo */}
               {selectedComplaint.photoUrl && (
