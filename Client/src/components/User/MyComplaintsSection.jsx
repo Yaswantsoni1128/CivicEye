@@ -118,14 +118,36 @@ export default function MyComplaintsSection() {
 
                 {/* Content */}
                 <div className="p-4">
-                  {/* Photo */}
+                  {/* Original Complaint Photo */}
                   {complaint.photoUrl && (
                     <div className="mb-4">
+                      <p className="text-xs text-gray-600 mb-2 font-medium">Original Complaint Photo</p>
                       <img
                         src={complaint.photoUrl}
                         alt="Complaint evidence"
                         className="w-full h-32 object-cover rounded-lg border border-gray-200"
                       />
+                    </div>
+                  )}
+
+                  {/* Proof Photo (if resolved) */}
+                  {complaint.proofPhotoUrl && (
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-600 mb-2 font-medium flex items-center gap-1">
+                        <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Resolution Proof Photo
+                      </p>
+                      <img
+                        src={complaint.proofPhotoUrl}
+                        alt="Resolution proof"
+                        className="w-full h-48 object-cover rounded-lg border-2 border-green-200 shadow-sm"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Work completed by {complaint.assignedTo?.name || 'worker'}
+                        {complaint.resolvedAt && ` on ${new Date(complaint.resolvedAt).toLocaleDateString()}`}
+                      </p>
                     </div>
                   )}
 

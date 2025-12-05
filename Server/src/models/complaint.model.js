@@ -17,7 +17,8 @@ const complaintSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   resolvedAt: { type: Date },
   title: { type: String },
-  feedback: { type: String, enum: ["satisfied", "not_satisfied"], default: null }
+  feedback: { type: String, enum: ["satisfied", "not_satisfied"], default: null },
+  rating: { type: Number, min: 1, max: 5, default: null }
 });
 
 complaintSchema.index({ location: "2dsphere" });
