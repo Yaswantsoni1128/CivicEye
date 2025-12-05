@@ -8,10 +8,13 @@ import {
   Clock,
   AlertTriangle,
   Camera,
-  RefreshCw
+  RefreshCw,
+  Upload,
+  X
 } from 'lucide-react';
 import { fetchAssignedComplaints, startComplaint, resolveComplaint, setEstimatedResolutionDate } from '../../lib/api';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const AssignedComplaints = () => {
   const [complaints, setComplaints] = useState([]);
@@ -22,6 +25,9 @@ const AssignedComplaints = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [resolveData, setResolveData] = useState({ proofPhotoUrl: '' });
+  const [proofPhotoFile, setProofPhotoFile] = useState(null);
+  const [proofPhotoPreview, setProofPhotoPreview] = useState(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [showEtaModal, setShowEtaModal] = useState(false);
   const [etaDate, setEtaDate] = useState('');
 
@@ -80,16 +86,71 @@ const AssignedComplaints = () => {
   };
 
   const handleResolveComplaint = async () => {
+    if (!proofPhotoFile) {
+      toast.error('Please upload a proof photo');
+      return;
+    }
+
     try {
-      await resolveComplaint(selectedComplaint._id, resolveData);
+      setUploadingPhoto(true);
+      
+      // Step 1: Upload image to Cloudinary
+      const formData = new FormData();
+      formData.append("file", proofPhotoFile);
+      formData.append("upload_preset", "civicEye_uploads");
+
+      const uploadRes = await axios.post(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`,
+        formData
+      );
+
+      const proofPhotoUrl = uploadRes.data.secure_url;
+
+      // Step 2: Resolve complaint with the uploaded photo URL
+      await resolveComplaint(selectedComplaint._id, { proofPhotoUrl });
       toast.success('Complaint resolved successfully');
       setShowResolveModal(false);
       setResolveData({ proofPhotoUrl: '' });
+      setProofPhotoFile(null);
+      setProofPhotoPreview(null);
       fetchComplaints();
     } catch (error) {
       console.error('Error resolving complaint:', error);
-      toast.error('Failed to resolve complaint');
+      toast.error(error?.response?.data?.message || 'Failed to resolve complaint');
+    } finally {
+      setUploadingPhoto(false);
     }
+  };
+
+  const handleProofPhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file');
+        return;
+      }
+      
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('Image size should be less than 10MB');
+        return;
+      }
+
+      setProofPhotoFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProofPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveProofPhoto = () => {
+    setProofPhotoFile(null);
+    setProofPhotoPreview(null);
   };
 
   const handleSaveEta = async () => {
@@ -338,6 +399,9 @@ const AssignedComplaints = () => {
                                 <button
                                   onClick={() => {
                                     setSelectedComplaint(complaint);
+                                    setProofPhotoFile(null);
+                                    setProofPhotoPreview(null);
+                                    setResolveData({ proofPhotoUrl: '' });
                                     setShowResolveModal(true);
                                   }}
                                   className="text-green-600 hover:text-green-900"
@@ -363,7 +427,7 @@ const AssignedComplaints = () => {
 
         {/* Resolve Modal */}
         {showResolveModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -373,31 +437,81 @@ const AssignedComplaints = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Proof Photo URL
+                    Proof Photo *
                   </label>
-                  <input
-                    type="url"
-                    value={resolveData.proofPhotoUrl}
-                    onChange={(e) => setResolveData({ ...resolveData, proofPhotoUrl: e.target.value })}
-                    placeholder="Enter proof photo URL"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Upload a photo showing the completed work
-                  </p>
+                  
+                  {proofPhotoPreview ? (
+                    <div className="relative mb-2">
+                      <img
+                        src={proofPhotoPreview}
+                        alt="Proof photo preview"
+                        className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                      />
+                      <button
+                        onClick={handleRemoveProofPhoto}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                        type="button"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProofPhotoChange}
+                        className="hidden"
+                        id="proof-photo-upload"
+                      />
+                      <label htmlFor="proof-photo-upload" className="cursor-pointer">
+                        <div className="flex flex-col items-center">
+                          <Camera className="w-8 h-8 text-gray-400 mb-2" />
+                          <p className="text-sm font-medium text-gray-700 mb-1">
+                            Click to upload proof photo
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Upload a photo showing the completed work
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                  )}
+                  
+                  {proofPhotoFile && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Selected: {proofPhotoFile.name}
+                    </p>
+                  )}
                 </div>
                 <div className="flex justify-end space-x-3">
                   <button
-                    onClick={() => setShowResolveModal(false)}
+                    onClick={() => {
+                      setShowResolveModal(false);
+                      setProofPhotoFile(null);
+                      setProofPhotoPreview(null);
+                    }}
                     className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                    disabled={uploadingPhoto}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleResolveComplaint}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    disabled={!proofPhotoFile || uploadingPhoto}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    Resolve
+                    {uploadingPhoto ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        Resolve
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

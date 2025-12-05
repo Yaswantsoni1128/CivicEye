@@ -15,7 +15,8 @@ import {
   ArrowUpRight,
   Loader2,
   TrendingUp,
-  Users
+  Users,
+  X
 } from 'lucide-react';
 import { fetchAllComplaints, assignComplaint, updateComplaint, fetchWorkers } from '../../lib/api';
 import toast from 'react-hot-toast';
@@ -35,6 +36,7 @@ const ComplaintManagement = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [assignData, setAssignData] = useState({ workerId: '' });
   const [updateData, setUpdateData] = useState({ status: '', priority: '', type: '' });
   const [refreshing, setRefreshing] = useState(false);
@@ -519,6 +521,17 @@ const ComplaintManagement = () => {
                           <Pencil className="w-4 h-4 mr-1" />
                           Edit
                         </button>
+                        <button
+                          onClick={() => {
+                            setSelectedComplaint(complaint);
+                            setShowDetailsModal(true);
+                          }}
+                          className="inline-flex items-center px-3 py-1.5 rounded-xl border border-green-200 text-green-600 hover:bg-green-50 transition"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          View
+                        </button>
                       </div>
                     </td>
                   </motion.tr>
@@ -677,6 +690,144 @@ const ComplaintManagement = () => {
                   className="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition"
                 >
                   Update
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Details Modal */}
+      {showDetailsModal && selectedComplaint && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
+          >
+            <div className="px-6 py-4 border-b border-gray-100 sticky top-0 bg-white">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-gray-900">Complaint Details</h3>
+                <button
+                  onClick={() => setShowDetailsModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            <div className="px-6 py-6 space-y-6">
+              {/* Basic Info */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Complaint Information</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Title:</span>
+                    <span className="text-sm font-medium text-gray-900">{selectedComplaint.title || selectedComplaint.type || 'Untitled'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Type:</span>
+                    <span className="text-sm font-medium text-gray-900 capitalize">{selectedComplaint.type || '—'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Status:</span>
+                    <span className="text-sm font-medium text-gray-900 capitalize">{selectedComplaint.status?.replace('_', ' ') || '—'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Priority:</span>
+                    <span className={`text-sm font-medium px-2 py-1 rounded ${getPriorityColor(selectedComplaint.priority)}`}>
+                      {selectedComplaint.priority || '—'}
+                    </span>
+                  </div>
+                  {selectedComplaint.description && (
+                    <div>
+                      <span className="text-sm text-gray-600">Description:</span>
+                      <p className="text-sm text-gray-900 mt-1">{selectedComplaint.description}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Original Complaint Photo */}
+              {selectedComplaint.photoUrl && (
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Original Complaint Photo</h4>
+                  <img
+                    src={selectedComplaint.photoUrl}
+                    alt="Complaint evidence"
+                    className="w-full h-64 object-cover rounded-lg border border-gray-200"
+                  />
+                </div>
+              )}
+
+              {/* Proof Photo */}
+              {selectedComplaint.proofPhotoUrl && (
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    Resolution Proof Photo
+                  </h4>
+                  <img
+                    src={selectedComplaint.proofPhotoUrl}
+                    alt="Resolution proof"
+                    className="w-full h-64 object-cover rounded-lg border-2 border-green-200 shadow-sm"
+                  />
+                  {selectedComplaint.resolvedAt && (
+                    <p className="text-xs text-gray-500 mt-2">
+                      Resolved on {formatDate(selectedComplaint.resolvedAt)}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Assignment Info */}
+              {selectedComplaint.assignedTo && (
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Assignment Details</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">Assigned To:</span>
+                      <span className="text-sm font-medium text-gray-900">{selectedComplaint.assignedTo.name || '—'}</span>
+                    </div>
+                    {selectedComplaint.assignedTo.phone && (
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Phone:</span>
+                        <span className="text-sm font-medium text-gray-900">{selectedComplaint.assignedTo.phone}</span>
+                      </div>
+                    )}
+                    {selectedComplaint.estimatedResolutionDate && (
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Estimated Resolution:</span>
+                        <span className="text-sm font-medium text-gray-900">{formatDate(selectedComplaint.estimatedResolutionDate)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Dates */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Timeline</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Created:</span>
+                    <span className="text-sm font-medium text-gray-900">{formatDate(selectedComplaint.createdAt)}</span>
+                  </div>
+                  {selectedComplaint.resolvedAt && (
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">Resolved:</span>
+                      <span className="text-sm font-medium text-green-600">{formatDate(selectedComplaint.resolvedAt)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4 border-t border-gray-100">
+                <button
+                  onClick={() => setShowDetailsModal(false)}
+                  className="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition"
+                >
+                  Close
                 </button>
               </div>
             </div>

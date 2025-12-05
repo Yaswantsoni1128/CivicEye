@@ -232,14 +232,34 @@ export default function TrackSection() {
                   </span>
                 </div>
 
-                {/* Photo */}
+                {/* Original Complaint Photo */}
                 {complaint.photoUrl && (
                   <div className="mb-3">
+                    <p className="text-xs text-gray-600 mb-2 font-medium">Original Complaint Photo</p>
                     <img
                       src={complaint.photoUrl}
                       alt="Complaint evidence"
                       className="w-full h-32 object-cover rounded-lg border border-gray-200"
                     />
+                  </div>
+                )}
+
+                {/* Proof Photo (if resolved) */}
+                {complaint.proofPhotoUrl && (
+                  <div className="mb-3">
+                    <p className="text-xs text-gray-600 mb-2 font-medium flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3 text-green-600" />
+                      Resolution Proof Photo
+                    </p>
+                    <img
+                      src={complaint.proofPhotoUrl}
+                      alt="Resolution proof"
+                      className="w-full h-48 object-cover rounded-lg border-2 border-green-200 shadow-sm"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Work completed by {complaint.assignedTo?.name || 'worker'}
+                      {complaint.resolvedAt && ` on ${new Date(complaint.resolvedAt).toLocaleDateString()}`}
+                    </p>
                   </div>
                 )}
 
