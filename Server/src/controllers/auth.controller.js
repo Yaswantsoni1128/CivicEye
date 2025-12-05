@@ -104,12 +104,22 @@ export const login = async (req, res) => {
     const user = await Model.findOne({ phone });
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    // Extra safety: for citizen logins via User model, ensure stored role matches
+    if (Model === User && user.role && user.role !== role) {
+      return res
+        .status(403)
+        .json({
+          message: `Account role mismatch. This account is '${user.role}' and cannot log in as '${role}'.`,
+        });
+    }
+
     const validPassword = await user.isValidPassword(password);
     if (!validPassword) {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
-    const token = generateToken(user);
+    // Explicitly include role in token so auth middleware can distinguish models
+    const token = generateToken(user, role);
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -118,7 +128,12 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ token, user, role });
+    // Ensure response.user has role but not password
+    const userData = user.toObject ? user.toObject() : user;
+    if (userData.password) delete userData.password;
+    userData.role = role;
+
+    res.status(200).json({ token, user: userData, role });
   } catch (err) {
     res.status(500).json({ message: "Login failed", error: err });
   }

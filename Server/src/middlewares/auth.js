@@ -11,18 +11,18 @@ export const authMiddleware = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("decoded", decoded);
 
     let Model;
     if (decoded.role === "citizen") Model = User;
     else if (decoded.role === "worker") Model = Worker;
     else if (decoded.role === "admin") Model = Admin;
+    else return res.status(401).json({ message: "Invalid role in token" });
 
-    console.log("decoded", decoded);
-    const user = await User.findById({ _id: decoded.id });
-    console.log("user", user);
+    const user = await Model.findById(decoded.id);
     if (!user) return res.status(401).json({ message: "User not found" });
-    console.log("user found", user);
-    req.user = { id: user._id, role: decoded.role, model: Model }; 
+
+    req.user = { id: user._id, role: decoded.role, model: Model };
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });
