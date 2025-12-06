@@ -1,4 +1,4 @@
-# CivicEye Client
+# Fix My Locality Client
 
 A modern, responsive React application for citizen civic issue reporting and tracking.
 

@@ -15,7 +15,7 @@ const Settings = () => {
   const [activeTab, setActiveTab] = useState('general');
   const [settings, setSettings] = useState({
     general: {
-      siteName: 'CivicEye',
+      siteName: 'Fix My Locality',
       siteDescription: 'Community complaint management system',
       timezone: 'UTC+5:30',
       language: 'en'
