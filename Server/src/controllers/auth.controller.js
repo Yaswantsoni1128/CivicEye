@@ -147,7 +147,7 @@ export const createAdmin = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { phone, password, role } = req.body;
-
+console.log("Login attempt:", { phone, role });
     let Model;
     if (role === "citizen") Model = User;
     else if (role === "worker") Model = Worker;

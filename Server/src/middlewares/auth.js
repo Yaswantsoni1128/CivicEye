@@ -6,7 +6,7 @@ import Admin from "../models/admin.model.js";
 export const authMiddleware = async (req, res, next) => {
     console.log("Cookies received:", req.cookies);
   let token = req.headers["authorization"]?.split(" ")[1] || req.cookies?.token;
-
+  console.log("Token extracted:", token);
   if (!token) return res.status(401).json({ message: "No token provided" });
 
   try {
