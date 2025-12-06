@@ -78,7 +78,7 @@ export default function HomeSection({ setActive }) {
           transition={{ delay: 0.2 }}
           className="text-2xl font-bold text-gray-900 mb-2"
         >
-          Welcome to CivicEye
+          Welcome to Fix My Locality
         </motion.h1>
         <motion.p 
           initial={{ opacity: 0 }}

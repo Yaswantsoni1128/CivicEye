@@ -13,13 +13,13 @@ const WorkerHeader = ({ user }) => {
       <div className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center">
           <img
-            src="/civicEyeLogo.jpg"
-            alt="CivicEye Logo"
+            src="/fix_my_locality.png"
+            alt="Fix My Locality Logo"
             className="h-10 w-10 rounded-full mr-3"
           />
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Worker Panel</h1>
-            <p className="text-sm text-gray-500">CivicEye Worker Dashboard</p>
+            <p className="text-sm text-gray-500">Fix My Locality Worker Dashboard</p>
           </div>
         </div>
 

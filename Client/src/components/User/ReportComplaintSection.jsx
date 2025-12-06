@@ -6,6 +6,8 @@ import toast, { Toaster } from "react-hot-toast";
 
 export default function ReportComplaintSection() {
   const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [useCamera, setUseCamera] = useState(false);
   const [location, setLocation] = useState({ type: "Point", coordinates: [] });
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -106,6 +108,20 @@ export default function ReportComplaintSection() {
     }
   }, []);
 
+  // Handle file selection (both camera and file upload)
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -146,10 +162,16 @@ export default function ReportComplaintSection() {
       .then(() => {
         toast.success("Complaint submitted successfully!");
         setFile(null);
+        setPreview(null);
         setTitle("");
         setDescription("");
         setState("");
         setDistrict("");
+        // Reset file inputs
+        const fileInput = document.getElementById("photo-upload");
+        const cameraInput = document.getElementById("photo-camera");
+        if (fileInput) fileInput.value = "";
+        if (cameraInput) cameraInput.value = "";
       })
       .catch((err) => {
         console.error("Error:", err);
@@ -248,26 +270,133 @@ export default function ReportComplaintSection() {
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Photo Evidence *
               </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-green-400 transition-colors duration-300">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  id="photo-upload"
-                  onChange={(e) => setFile(e.target.files[0])}
-                  required
-                />
-                <label htmlFor="photo-upload" className="cursor-pointer">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              
+              {/* Mode Toggle Buttons */}
+              <div className="flex gap-2 mb-3">
+                <button
+                  type="button"
+                  onClick={() => setUseCamera(false)}
+                  className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 ${
+                    !useCamera
+                      ? "bg-green-500 text-white shadow-md hover:bg-green-600"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
+                    Upload from Device
                   </div>
-                  <p className="text-sm font-medium text-gray-700 mb-1">
-                    {file ? file.name : "Click to upload photo"}
-                  </p>
-                  <p className="text-xs text-gray-500">Upload a clear photo of the issue</p>
-                </label>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUseCamera(true)}
+                  className={`flex-1 py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-300 ${
+                    useCamera
+                      ? "bg-blue-500 text-white shadow-md hover:bg-blue-600"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Take Photo
+                  </div>
+                </button>
+              </div>
+
+              {/* File Upload Input (Hidden) */}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                id="photo-upload"
+                onChange={handleFileChange}
+                required={!file}
+              />
+
+              {/* Camera Input (Hidden) */}
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                id="photo-camera"
+                onChange={handleFileChange}
+                required={!file}
+              />
+
+              {/* Upload Area */}
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-green-400 transition-colors duration-300">
+                {preview ? (
+                  <div className="space-y-3">
+                    <div className="relative inline-block">
+                      <img
+                        src={preview}
+                        alt="Preview"
+                        className="max-h-64 mx-auto rounded-lg shadow-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFile(null);
+                          setPreview(null);
+                          const fileInput = document.getElementById("photo-upload");
+                          const cameraInput = document.getElementById("photo-camera");
+                          if (fileInput) fileInput.value = "";
+                          if (cameraInput) cameraInput.value = "";
+                        }}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors shadow-lg"
+                        title="Remove photo"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    <p className="text-sm text-gray-600 font-medium">{file?.name || "Photo captured"}</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (useCamera) {
+                          document.getElementById("photo-camera")?.click();
+                        } else {
+                          document.getElementById("photo-upload")?.click();
+                        }
+                      }}
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium underline"
+                    >
+                      {useCamera ? "Retake Photo" : "Change Photo"}
+                    </button>
+                  </div>
+                ) : (
+                  <label
+                    htmlFor={useCamera ? "photo-camera" : "photo-upload"}
+                    className="cursor-pointer block"
+                  >
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-gray-200 transition-colors">
+                      {useCamera ? (
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      )}
+                    </div>
+                    <p className="text-sm font-medium text-gray-700 mb-1">
+                      {useCamera ? "Click to take a photo" : "Click to upload photo"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {useCamera ? "Use your device camera to capture the issue" : "Upload a clear photo of the issue"}
+                    </p>
+                  </label>
+                )}
               </div>
             </motion.div>
 

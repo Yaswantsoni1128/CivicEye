@@ -36,10 +36,10 @@ const About = () => {
           className="text-center mb-16"
         >
           <h1 className="text-4xl md:text-6xl font-bold text-green-700 mb-6">
-            About CivicEye
+            About Fix My Locality
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            A citizen-centric platform that empowers communities to report and track civic issues, 
+            Fix My Locality is a citizen-centric platform that empowers communities to report and track civic issues, 
             fostering transparency and accountability in local governance.
           </p>
         </motion.div>
@@ -76,7 +76,7 @@ const About = () => {
             Our Mission
           </h2>
           <p className="text-lg text-gray-600 text-center max-w-4xl mx-auto">
-            CivicEye bridges the gap between citizens and local government by providing a 
+            Fix My Locality bridges the gap between citizens and local government by providing a 
             transparent, efficient, and user-friendly platform for reporting civic issues. 
             We believe that every citizen has the right to a clean, safe, and well-maintained 
             community, and we're here to make that vision a reality.
