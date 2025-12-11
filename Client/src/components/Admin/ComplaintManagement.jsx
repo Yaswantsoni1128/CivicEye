@@ -243,9 +243,9 @@ const ComplaintManagement = () => {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Hero Section */}
-      <motion.div
+    <div className="space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Hero Section - Commented out unnecessary decorative elements */}
+      {/* <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -294,10 +294,26 @@ const ComplaintManagement = () => {
             </button>
           </div>
         </div>
-      </motion.div>
+      </motion.div> */}
+
+      {/* Header with Refresh Button */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">Complaints</h1>
+        <button
+          onClick={fetchComplaints}
+          className="inline-flex items-center px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition"
+        >
+          {refreshing ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <RefreshCw className="w-4 h-4 mr-2" />
+          )}
+          Refresh
+        </button>
+      </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-2xl p-5 bg-green-50 border border-green-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-green-600 font-medium">Total Complaints</p>
@@ -347,7 +363,7 @@ const ComplaintManagement = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 space-y-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative flex-1">
             <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -402,16 +418,16 @@ const ComplaintManagement = () => {
             </button>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-sm text-gray-500">
+        <div className="flex items-center gap-3 text-sm text-gray-500 pt-2 border-t border-gray-100">
           <ArrowUpRight className="w-4 h-4 text-green-500" />
           Viewing {filteredComplaints.length} complaint{filteredComplaints.length === 1 ? '' : 's'}
         </div>
       </div>
 
       {/* Complaints Table */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden w-full max-w-full">
+        <div className="overflow-x-auto overflow-y-auto w-full max-h-[600px]">
+          <table className="w-full min-w-[1000px]">
             <thead className="bg-gray-50/80 backdrop-blur">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -585,11 +601,11 @@ const ComplaintManagement = () => {
 
       {/* Assign Modal */}
       {showAssignModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 py-4 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl w-full max-w-lg shadow-2xl"
+            className="bg-white rounded-2xl w-full max-w-lg shadow-2xl my-auto max-h-[90vh] overflow-y-auto"
           >
             <div className="px-6 py-4 border-b border-gray-100">
               <h3 className="text-xl font-semibold text-gray-900">Assign Complaint</h3>
@@ -666,11 +682,11 @@ const ComplaintManagement = () => {
 
       {/* Update Modal */}
       {showUpdateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 py-4 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl w-full max-w-lg shadow-2xl"
+            className="bg-white rounded-2xl w-full max-w-lg shadow-2xl my-auto max-h-[90vh] overflow-y-auto"
           >
             <div className="px-6 py-4 border-b border-gray-100">
               <h3 className="text-xl font-semibold text-gray-900">Update Complaint</h3>

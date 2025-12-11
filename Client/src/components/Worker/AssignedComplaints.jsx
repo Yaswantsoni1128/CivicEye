@@ -213,14 +213,15 @@ const AssignedComplaints = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="w-full max-w-full overflow-x-hidden">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
+        className="w-full max-w-full"
       >
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Assigned Complaints</h1>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Assigned Complaints</h1>
           <button
             onClick={fetchComplaints}
             className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -231,8 +232,8 @@ const AssignedComplaints = () => {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex flex-col lg:flex-row gap-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 w-full max-w-full overflow-x-hidden">
+          <div className="flex flex-col lg:flex-row gap-4 w-full">
             <div className="flex-1">
               <div className="relative">
                 <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -261,7 +262,7 @@ const AssignedComplaints = () => {
         </div>
 
         {/* Complaints List or Empty States */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 w-full max-w-full overflow-x-hidden">
           {/* Case: No assigned complaints at all */}
           {complaints.length === 0 ? (
             <div className="text-center py-12">
@@ -305,8 +306,8 @@ const AssignedComplaints = () => {
                   </div>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
+                <div className="overflow-x-auto w-full">
+                  <table className="w-full min-w-[800px]">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -427,11 +428,11 @@ const AssignedComplaints = () => {
 
         {/* Resolve Modal */}
         {showResolveModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-4 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-lg p-6 w-full max-w-md"
+              className="bg-white rounded-lg p-6 w-full max-w-md my-auto max-h-[90vh] overflow-y-auto"
             >
               <h3 className="text-lg font-semibold mb-4">Resolve Complaint</h3>
               <div className="space-y-4">
@@ -521,11 +522,11 @@ const AssignedComplaints = () => {
 
         {/* ETA Modal */}
         {showEtaModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-4 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-lg p-6 w-full max-w-md"
+              className="bg-white rounded-lg p-6 w-full max-w-md my-auto max-h-[90vh] overflow-y-auto"
             >
               <h3 className="text-lg font-semibold mb-4">Estimated resolution date</h3>
               <div className="space-y-4">
