@@ -123,7 +123,7 @@ const WorkerDashboard = () => {
   return (
     <>
       <Toaster position="top-right" />
-      <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-x-hidden">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:flex flex-col bg-white shadow-2xl w-80 h-screen fixed z-20 border-r border-gray-200">
           {/* Sidebar Header */}
@@ -133,7 +133,7 @@ const WorkerDashboard = () => {
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">CivicEye</h2>
+                <h2 className="text-xl font-bold text-white">Fix My Locality</h2>
                 <p className="text-green-100 text-sm">Worker Panel</p>
               </div>
             </div>
@@ -230,7 +230,7 @@ const WorkerDashboard = () => {
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white">CivicEye</h2>
+                  <h2 className="text-lg font-bold text-white">Fix My Locality</h2>
                   <p className="text-green-100 text-xs">Worker Panel</p>
                 </div>
               </div>
@@ -311,9 +311,9 @@ const WorkerDashboard = () => {
         )}
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col lg:ml-80">
+        <div className="flex-1 flex flex-col lg:ml-80 min-w-0 overflow-x-hidden">
           {/* Header */}
-          <header className="h-16 bg-white shadow-sm border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8">
+          <header className="h-16 bg-white shadow-sm border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 flex-shrink-0">
             <div className="flex items-center space-x-4">
               <button 
                 className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition"
@@ -342,7 +342,7 @@ const WorkerDashboard = () => {
           </header>
 
           {/* Page Content */}
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-50 overflow-y-auto">
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-50 overflow-y-auto overflow-x-hidden min-w-0">
             <AnimatePresence mode="wait">
               <motion.div
                 key={active}
@@ -350,7 +350,7 @@ const WorkerDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white shadow-xl rounded-2xl p-6 lg:p-8 min-h-[600px]"
+                className="bg-white shadow-xl rounded-2xl p-6 lg:p-8 min-h-[600px] w-full max-w-full overflow-x-hidden"
               >
                 {renderActiveSection()}
               </motion.div>

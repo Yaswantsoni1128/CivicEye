@@ -147,7 +147,7 @@ export default function TrackSection() {
       initial={{ opacity: 0, y: 20 }} 
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="space-y-8"
+      className="space-y-8 w-full max-w-full overflow-x-hidden"
     >
       {/* Header Section */}
       <div className="text-center">

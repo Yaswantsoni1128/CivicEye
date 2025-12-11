@@ -69,7 +69,7 @@ cp .env.example .env
 ```env
 VITE_BACKEND_URL=http://localhost:3000
 VITE_CLOUD_NAME=your_cloudinary_cloud_name
-VITE_CLOUDINARY_UPLOAD_PRESET=civicEye_uploads
+VITE_CLOUDINARY_UPLOAD_PRESET=Fix My Locality_uploads
 ```
 
 4. Start development server:
@@ -144,4 +144,4 @@ The app integrates with a Node.js backend API. Key endpoints:
 
 ## License
 
-This project is part of the CivicEye platform for citizen engagement and civic issue reporting.
+This project is part of the Fix My Locality platform for citizen engagement and civic issue reporting.

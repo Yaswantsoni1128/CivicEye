@@ -221,65 +221,36 @@ const WorkerManagement = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative overflow-hidden rounded-3xl bg-green-600 text-white px-8 py-10 shadow-2xl"
-      >
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.8),_transparent_55%)]" />
-        <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/20 blur-3xl rounded-full" />
-        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-6 max-w-2xl">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/15 backdrop-blur text-sm font-semibold tracking-wide">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Workforce Control Center
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold leading-tight">Workers Command Hub</h1>
-              <p className="text-white/80 mt-3 text-lg">
-                Monitor productivity, balance workloads, and keep CivicEye’s field force in sync.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <div className="bg-white/10 rounded-2xl px-4 py-3">
-                <p className="text-sm text-white/70">Active workforce</p>
-                <p className="text-3xl font-bold">{stats.active}</p>
-              </div>
-              <div className="bg-white/10 rounded-2xl px-4 py-3">
-                <p className="text-sm text-white/70">Avg. completion rate</p>
-                <p className="text-3xl font-bold">{averageCompletionRate}%</p>
-              </div>
-              <div className="bg-white/10 rounded-2xl px-4 py-3">
-                <p className="text-sm text-white/70">Cases per active worker</p>
-                <p className="text-3xl font-bold">{complaintsPerActive}</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={loadWorkers}
-              className="inline-flex items-center px-6 py-3 rounded-2xl bg-white/15 backdrop-blur border border-white/20 font-semibold hover:bg-white/25 transition"
-            >
-              {refreshing ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <RefreshCw className="w-4 h-4 mr-2" />
-              )}
-              Sync data
-            </button>
-            <button
-              onClick={handleOpenCreate}
-              className="inline-flex items-center px-6 py-3 rounded-2xl bg-white text-emerald-600 font-semibold shadow-lg hover:shadow-xl transition"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add worker
-            </button>
-          </div>
+    <div className="space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Simplified Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Worker Management</h1>
+          <p className="text-sm text-gray-500 mt-1">Manage worker accounts and monitor performance</p>
         </div>
-      </motion.div>
+        <div className="flex gap-3">
+          <button
+            onClick={loadWorkers}
+            className="inline-flex items-center px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition"
+          >
+            {refreshing ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-2" />
+            )}
+            Refresh
+          </button>
+          <button
+            onClick={handleOpenCreate}
+            className="inline-flex items-center px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Worker
+          </button>
+        </div>
+      </div>
 
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <div className="rounded-2xl p-5 bg-green-50 border border-green-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
@@ -328,81 +299,79 @@ const WorkerManagement = () => {
         </div>
       </div>
 
-      <div className="flex flex-col xl:flex-row gap-6">
-        <div className="flex-1 space-y-4">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div className="relative flex-1">
-                <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search by name, email, or phone"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                {statusFilters.map((filter) => (
-                  <button
-                    key={filter.value}
-                    onClick={() => setStatusFilter(filter.value)}
-                    className={`px-3 py-2 rounded-xl text-sm font-medium transition border ${
-                      statusFilter === filter.value
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                        : 'text-gray-500 border-transparent hover:bg-gray-50'
-                    }`}
-                  >
-                    {filter.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-sm text-gray-500">
-              <ArrowUpRight className="w-4 h-4 text-emerald-500" />
-              Viewing {filteredWorkers.length} worker
-              {filteredWorkers.length === 1 ? '' : 's'} (
-              {statusFilter === 'all' ? 'all statuses' : `${statusFilter} only`})
-            </div>
+      {/* Search and Filters */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 space-y-4">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative flex-1">
+            <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by name, email, or phone"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
           </div>
+          <div className="flex items-center gap-2">
+            {statusFilters.map((filter) => (
+              <button
+                key={filter.value}
+                onClick={() => setStatusFilter(filter.value)}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition border ${
+                  statusFilter === filter.value
+                    ? 'bg-green-50 text-green-700 border-green-200'
+                    : 'text-gray-500 border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <ArrowUpRight className="w-4 h-4 text-green-500" />
+          Viewing {filteredWorkers.length} worker{filteredWorkers.length === 1 ? '' : 's'} ({statusFilter === 'all' ? 'all statuses' : `${statusFilter} only`})
+        </div>
+      </div>
 
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50/80 backdrop-blur">
+      {/* Workers Table */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden w-full max-w-full">
+        <div className="overflow-x-auto w-full max-h-[600px] overflow-y-auto">
+          <table className="w-full min-w-[900px]">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Worker
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Contact
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Workload
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Created
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-100">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {loading ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
-                        <Loader2 className="w-6 h-6 mx-auto mb-4 animate-spin text-emerald-500" />
-                        Loading workforce data...
+                        <Loader2 className="w-6 h-6 mx-auto mb-4 animate-spin text-green-500" />
+                        Loading workers...
                       </td>
                     </tr>
                   ) : filteredWorkers.length === 0 ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-12 text-center text-gray-400">
-                        No workers match your filters
+                        No workers found
                       </td>
                     </tr>
                   ) : (
@@ -411,22 +380,19 @@ const WorkerManagement = () => {
                       const completed = worker.completedCount || 0;
                       const completionRate = assigned ? Math.round((completed / assigned) * 100) : 0;
                       return (
-                        <motion.tr
+                        <tr
                           key={worker._id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.02 }}
-                          className="hover:bg-gray-50/70"
+                          className="hover:bg-gray-50 transition-colors"
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 rounded-2xl bg-green-100 text-green-700 font-semibold flex items-center justify-center">
+                              <div className="w-10 h-10 rounded-lg bg-green-100 text-green-700 font-semibold flex items-center justify-center text-sm">
                                 {getInitials(worker.name)}
                               </div>
                               <div>
                                 <p className="font-semibold text-gray-900">{worker.name}</p>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                  <p className="text-xs text-gray-400 tracking-wide">
+                                  <p className="text-xs text-gray-400">
                                     ID: {worker._id?.slice(-6)}
                                   </p>
                                   {worker.averageRating > 0 && (
@@ -450,27 +416,27 @@ const WorkerManagement = () => {
                           </td>
                           <td className="px-6 py-4">
                             <div className="space-y-1.5">
-                              <div className="flex items-center justify-between text-sm text-gray-500">
+                              <div className="flex items-center justify-between text-sm text-gray-600">
                                 <span>{completed} completed</span>
                                 <span>{assigned} assigned</span>
                               </div>
-                              <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden">
+                              <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
                                 <div
                                   className="h-full rounded-full bg-green-500"
                                   style={{ width: `${completionRate}%` }}
                                 />
                               </div>
-                              <p className="text-xs font-semibold text-emerald-600">
+                              <p className="text-xs font-semibold text-green-600">
                                 {completionRate}% completion
                               </p>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
-                              className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
+                              className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
                                 worker.status === 'inactive'
-                                  ? 'bg-red-50 text-red-600 border-red-100'
-                                  : 'bg-green-50 text-green-600 border-green-100'
+                                  ? 'bg-red-50 text-red-600'
+                                  : 'bg-green-50 text-green-600'
                               }`}
                             >
                               {worker.status || 'active'}
@@ -483,7 +449,7 @@ const WorkerManagement = () => {
                             <div className="flex justify-end gap-2">
                               <button
                                 onClick={() => handleOpenEdit(worker)}
-                                className="inline-flex items-center px-3 py-1.5 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-100 transition"
+                                className="inline-flex items-center px-3 py-1.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition text-sm"
                               >
                                 <Pencil className="w-4 h-4 mr-1" />
                                 Edit
@@ -491,7 +457,7 @@ const WorkerManagement = () => {
                               <button
                                 onClick={() => handleDelete(worker)}
                                 disabled={deleteLoadingId === worker._id}
-                                className="inline-flex items-center px-3 py-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition disabled:opacity-60"
+                                className="inline-flex items-center px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition disabled:opacity-60 text-sm"
                               >
                                 {deleteLoadingId === worker._id ? (
                                   <Loader2 className="w-4 h-4 mr-1 animate-spin" />
@@ -502,88 +468,28 @@ const WorkerManagement = () => {
                               </button>
                             </div>
                           </td>
-                        </motion.tr>
+                        </tr>
                       );
                     })
                   )}
                 </tbody>
               </table>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full xl:w-80 space-y-4">
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="text-sm text-gray-500">Star performers</p>
-                <h3 className="text-lg font-semibold text-gray-900">Top contributors</h3>
-              </div>
-              <Star className="w-6 h-6 text-amber-400" />
-            </div>
-            <div className="space-y-4">
-              {topPerformers.length === 0 ? (
-                <p className="text-sm text-gray-400">No performance data yet.</p>
-              ) : (
-                topPerformers.map((worker, index) => (
-                  <div
-                    key={worker._id}
-                    className="flex items-center justify-between rounded-2xl border border-gray-100 p-3"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 font-semibold flex items-center justify-center">
-                        {index + 1}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">{worker.name}</p>
-                        <p className="text-xs text-gray-500">
-                          {worker.completedCount || 0} cases solved
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                      {worker.status === 'inactive' ? 'paused' : 'active'}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-5 shadow-xl">
-            <p className="text-sm text-white/70">Operations pulse</p>
-            <h3 className="text-xl font-semibold mt-2">Live field insights</h3>
-            <ul className="mt-4 space-y-3 text-sm text-white/80">
-              <li className="flex items-start gap-2">
-                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                {stats.active} workers are actively resolving complaints.
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-400" />
-                Average load is {complaintsPerActive} cases per active worker.
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-amber-400" />
-                {stats.assigned - stats.completed} complaints waiting for closure.
-              </li>
-            </ul>
-          </div>
         </div>
       </div>
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-4 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl w-full max-w-lg shadow-2xl"
+            className="bg-white rounded-lg w-full max-w-lg shadow-2xl my-auto max-h-[90vh] overflow-y-auto"
           >
-            <div className="px-6 py-4 border-b border-gray-100">
+            <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-xl font-semibold text-gray-900">
                 {modalMode === 'create' ? 'Add Worker' : 'Edit Worker'}
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 mt-1">
                 {modalMode === 'create'
                   ? 'Create a new worker account and credentials.'
                   : 'Update worker contact info or status.'}
@@ -686,7 +592,7 @@ const WorkerManagement = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
