@@ -253,7 +253,7 @@ npm install
 
 ## 📝 License
 
-ISC License
+MIT License
 
 ## 👥 Contributors
 
